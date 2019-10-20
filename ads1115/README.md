@@ -15,9 +15,9 @@ battery voltage.
 
 ## Execution Instructions
 Cron command to run this script every minute, assuming that you have the
-script copied to /scripts/ads1115/get_bat.py 
+script copied to /scripts/ads1115/get_bat.py
 
-*/1 * * * * /usr/bin/python3 /scripts/ads1115/get_bat.py >/dev/null 2>&1     
+ */1 * * * * /usr/bin/python3 /scripts/ads1115/get_bat.py >/dev/null 2>&1     
 
 
 
