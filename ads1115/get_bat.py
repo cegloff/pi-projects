@@ -1,5 +1,6 @@
 import board
 import busio
+#### For the ada fruit libraries use sudo pip3 install adafruit-circuitpython-ads1x15
 import adafruit_ads1x15.ads1115 as ADS
 from adafruit_ads1x15.analog_in import AnalogIn
 from time import sleep
@@ -28,7 +29,7 @@ def get_battery():
         chan = AnalogIn(ads, ADS.P0)
         # Measuring with multimeter 2.043 was the correct multiplier for my splitter
         # this value should be updated for each build
-        current_voltage = chan.voltage * 2.043
+        current_voltage = chan.voltage * 2.005
         avg_bat = avg_bat + current_voltage
     avg_bat = avg_bat/4
 
@@ -40,11 +41,17 @@ def os_announce(message):
     # Use wall and xmessage to announce any message passed to the function
     # to all logged in users.
     command = "/usr/bin/wall"
-    subprocess.call([command, message])
-    os.environ["DISPLAY"] = ':0.0'
-    os.environ["XAUTHORITY"] = '/home/pi/.Xauthority'
-    command = "xmessage"
-    subprocess.call([command, message])
+    try:
+        subprocess.call([command, message])
+    except Exception as e:
+        print(e)
+    # os.environ["DISPLAY"] = ':0.0'
+    # os.environ["XAUTHORITY"] = '/home/pi/.Xauthority'
+    # command = "xmessage"
+    # try:
+    #     subprocess.call([command, message])
+    # except Exception as e:
+    #     print(e)
 
 
 def shutdown_system(message):
@@ -58,7 +65,7 @@ def shutdown_system(message):
 if __name__ == "__main__":
     current_bat = get_battery()
     current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    if current_bat <= 3.1:
+    if current_bat <= 6.4:
         # If the battery voltage is critical send a shutdown command and then
         # use wall to send a message to all users finally log the voltage and
         # warning to syslog
@@ -67,7 +74,7 @@ if __name__ == "__main__":
         syslog.syslog("[Critical] Battery Voltage is: %s" % current_bat)
         os_announce(message)
         shutdown_system(message)
-    elif current_bat < 3.2 and current_bat > 3.1:
+    elif current_bat < 7.0 and current_bat > 6.6:
         # If the battery voltage is low use wall to send a message to all users
         # then log the voltage and warning to syslog
         message = 'BATTERY IS LOW! Current Voltage = ' + str(current_bat)
