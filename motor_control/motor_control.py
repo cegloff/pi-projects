@@ -5,15 +5,20 @@ motorR = Motor(forward=4, backward=18)
 motorL = Motor(forward=17, backward=27)
 
 
-# while True:
-motorR.forward()
-sleep(2)
-motorR.backward()
-sleep(2)
-motorR.stop()
 
-motorL.forward()
-sleep(2)
-motorL.backward()
-sleep(2)
-motorL.stop()
+def forward():
+# while True:
+    motorR.forward()
+    motorL.forward()
+
+def stop():
+    motorR.stop()
+    motorL.stop()
+
+
+def reverse():
+    motorR.reverse()
+    motorL.reverse()
+
+
+
