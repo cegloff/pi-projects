@@ -9,12 +9,18 @@
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
         <script>
             function move(value, lspeed, rspeed){
+                lspeed = lspeed || 120;
+                rspeed = rspeed || 80;
                 axios.post('http://192.168.1.204:5000/commands',
                     { 
-                        "command": value
+                        "command": value,
+                        "lspeed": lspeed,
+                        "rspeed": rspeed
                     })
                     .then(response => {
-                        console.log(response.data);
+                        if ("error" in response.data){
+                            console.log(response.data);
+                        }
                     })
                     .catch(error => console.error(error));
             }
@@ -32,6 +38,7 @@
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
         
         <script>
+        // const abs = require('Math').abs
 		var hasGP = false;
 		var repGP;
 
@@ -63,35 +70,31 @@
                 $(window).on("gamepadForward", function() {
                     $("#moveDisplay").text("Forward");
                     gamepadText = "Forward";
-                    move("forward", 120, 90);
 					window.clearInterval(repGP);
                 });
                 
                 $(window).on("gamepadReverse", function() {
                     $("#moveDisplay").text("Reverse");
                     gamepadText = "Reverse";
-                    move("reverse", 100, 80);
 					window.clearInterval(repGP);
                 });
                 
                 $(window).on("gamepadLeft", function() {
                     $("#moveDisplay").text("Left");
                     gamepadText = "Left";
-                    move("left", 120, 120);
 					window.clearInterval(repGP);
                 });
                 
                 $(window).on("gamepadRight", function() {
                     $("#moveDisplay").text("Right");
                     gamepadText = "Right";
-                    move("right", 120, 120);
+                    // move("right", 120, 120);
 					window.clearInterval(repGP);
                 });
                 
                 $(window).on("gamepadStop", function() {
                     $("#moveDisplay").text("Stop");
                     gamepadText = "Stop";
-                    move("stop")
 					window.clearInterval(repGP);
 				});
                 
@@ -112,21 +115,53 @@
                 var gp = navigator.getGamepads()[0];
                 var axeLF = gp.axes[1];
                 var axeRF = gp.axes[2];
-                if(axeRF < -0.5){
+                if(axeRF < -0.25){
+                    turn_strength = Math.round((.4 * Math.abs(axeRF)) * 140)
+                    if (axeLF < -0.25 && axeRF > -0.99){
+                        
+                        move("forward", turn_strength, 140);
+                    }
+                    else if (axeLF > 0.25 && axeRF > -0.99){
+                        
+                        move("reverse", turn_strength, 140);
+                    }
+                    else if (axeLF > 0.25 && axeRF < -0.99){
+                        move("right", 140, 140);
+                    }
+                    else {
+                        move("left", 140,140)
+                    }
                     $(window).trigger("gamepadLeft");
-                    console.log("Left")
-                } else if(axeRF > 0.5) {
+                    console.log(turn_strength)
+                } else if(axeRF > 0.25) {
+                    turn_strength = Math.round((.4 * Math.abs(axeRF)) * 140)
+                    if (axeLF < -0.25 && axeRF < 0.99){
+                        move("forward", 140, turn_strength);
+                    }
+                    else if (axeLF > 0.25 && axeRF < 0.99){
+                        
+                        move("reverse", 140, turn_strength);
+                    }
+                    else if (axeLF > 0.25 && axeRF > 0.99){
+                        move("left", 140, 140);
+                    }
+                    else {
+                        move("right", 140,140)
+                    }
                     $(window).trigger("gamepadRight");
-                    console.log("Right")
+                    console.log(turn_strength)
                 }else if(axeLF < -0.5) {
                     $(window).trigger("gamepadForward");
-                    console.log("Forward")
+                    // console.log("Forward")
+                    move("forward", 110, 100);
                 } else if(axeLF > 0.5) {
                     $(window).trigger("gamepadReverse");
-                    console.log("Reverse")
+                    // console.log("Reverse")
+                    move("reverse", 130, 100);
                 } else {
                     $(window).trigger("gamepadStop");
-                    console.log("Stop")
+                    // console.log("Stop")
+                    move("stop")
 
                 }
             }			
