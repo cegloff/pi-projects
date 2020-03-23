@@ -1,3 +1,9 @@
+//ffmpeg -s 320x240 -f video4linux2 -i /dev/video0 -f mpeg1video -b 800k -r 30 http://127.0.0.1:8081/chris/640/480/
+//ffmpeg -i /dev/video0 -f mpegts -codec:v mpeg1video -s 640x480 -b:v 800k -r 30 http://127.0.0.1:8082/chris/640/480/
+//ffmpeg -i in.mp4      -f mpegts -codec:v mpeg1video -s 960x540 -b:v 1500k -r 30 -bf 0 -codec:a mp2 -ar 44100 -ac 1 -b:a 128k out.ts
+//ffmpeg -f v4l2 -framerate 25 -video_size 640x360 -i /dev/video0 -f mpegts -codec:v mpeg1video -s 640x360 -b:v 1000k -bf 0 http://localhost:8081/chris
+
+
 var express = require('express');
 var app = express();
 var fs = require("fs");
