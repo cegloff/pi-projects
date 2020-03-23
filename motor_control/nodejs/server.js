@@ -64,6 +64,8 @@ function reverse(left_speed,right_speed){
 }
 
 function left(left_speed,right_speed){
+    left_speed = left_speed || 80
+    right_speed = right_speed || 80
     set_speed(left_speed,right_speed);
     motorLF.digitalWrite(0);
     motorLR.digitalWrite(1);
@@ -74,6 +76,8 @@ function left(left_speed,right_speed){
 }
 
 function right(left_speed,right_speed){
+    left_speed = left_speed || 80
+    right_speed = right_speed || 80
     set_speed(left_speed,right_speed);
     motorLR.digitalWrite(0);
     motorLF.digitalWrite(1);
@@ -93,10 +97,10 @@ function stop(){
 
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use('/static', express.static('public'))
 
-
-app.get('/commands', function (req, res) {
-   res.status(200).send("200")
+app.get('/status', function (req, res) {
+   res.status(200).send("Running")
 })
 
 
