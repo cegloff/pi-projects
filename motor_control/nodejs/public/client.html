@@ -9,6 +9,7 @@
             html, body {
                 background-color: #111;
                 text-align: center;
+                color: aquamarine;
             }
         </style>
         <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
@@ -58,7 +59,63 @@
         // const abs = require('Math').abs
 		var hasGP = false;
 		var repGP;
+        function checkGamepad() {
+            var gp = navigator.getGamepads()[0];
+            var axeLF = gp.axes[1];
+            var axeRF = gp.axes[2];
+            
+            turn_strength = Math.round((1 - Math.abs(axeRF)) * 255);
+            if (turn_strength <= 0) {
+                turn_strength = 1;
+            }
+            full_turn_strength = Math.round(Math.abs(axeRF) * 200)
 
+            //Left Turns
+            if(axeRF < -0.15){
+                //Forward and left
+                if (axeLF < -0.15){
+                    move("forward", turn_strength, 200); 
+                }
+                //Reverse and left
+                else if (axeLF > 0.15){
+                    move("reverse", 200, turn_strength);
+                }
+                // // Full Left
+                else {
+                    move("left", full_turn_strength ,full_turn_strength);
+                } 
+                $(window).trigger("gamepadLeft");
+            // Right Turns
+            } else if(axeRF > 0.15) {
+                //Forward and right
+                if (axeLF < -0.15){
+                    move("forward", 200, turn_strength);
+                }
+                //Reverse and right
+                else if (axeLF > 0.15){
+                    move("reverse", turn_strength, 200);
+                }
+                //Full Right
+                else {
+                    move("right", full_turn_strength,full_turn_strength);
+                }
+                $(window).trigger("gamepadRight");
+                // console.log(turn_strength)
+            }
+            //Move forward
+            else if(axeLF < -0.5) {
+                $(window).trigger("gamepadForward");
+                move("forward", 160, 130);
+            //Reverse
+            } else if(axeLF > 0.5) {
+                $(window).trigger("gamepadReverse");
+                move("reverse", 130, 100);
+            //Stop
+            } else {
+                $(window).trigger("gamepadStop");
+                move("stop")
+            }
+        }	
 		function canGame() {
 			return "getGamepads" in navigator;
 		}
@@ -84,36 +141,36 @@
 					window.clearInterval(repGP);
 				});
                 
-                $(window).on("gamepadForward", function() {
-                    $("#moveDisplay").text("Forward");
-                    gamepadText = "Forward";
-					window.clearInterval(repGP);
-                });
+                // $(window).on("gamepadForward", function() {
+                //     $("#moveDisplay").text("Forward");
+                //     gamepadText = "Forward";
+				// 	window.clearInterval(repGP);
+                // });
                 
-                $(window).on("gamepadReverse", function() {
-                    $("#moveDisplay").text("Reverse");
-                    gamepadText = "Reverse";
-					window.clearInterval(repGP);
-                });
+                // $(window).on("gamepadReverse", function() {
+                //     $("#moveDisplay").text("Reverse");
+                //     gamepadText = "Reverse";
+				// 	window.clearInterval(repGP);
+                // });
                 
-                $(window).on("gamepadLeft", function() {
-                    $("#moveDisplay").text("Left");
-                    gamepadText = "Left";
-					window.clearInterval(repGP);
-                });
+                // $(window).on("gamepadLeft", function() {
+                //     $("#moveDisplay").text("Left");
+                //     gamepadText = "Left";
+				// 	window.clearInterval(repGP);
+                // });
                 
-                $(window).on("gamepadRight", function() {
-                    $("#moveDisplay").text("Right");
-                    gamepadText = "Right";
-                    // move("right", 120, 120);
-					window.clearInterval(repGP);
-                });
+                // $(window).on("gamepadRight", function() {
+                //     $("#moveDisplay").text("Right");
+                //     gamepadText = "Right";
+                //     // move("right", 120, 120);
+				// 	window.clearInterval(repGP);
+                // });
                 
-                $(window).on("gamepadStop", function() {
-                    $("#moveDisplay").text("Stop");
-                    gamepadText = "Stop";
-					window.clearInterval(repGP);
-				});
+                // $(window).on("gamepadStop", function() {
+                //     $("#moveDisplay").text("Stop");
+                //     gamepadText = "Stop";
+				// 	window.clearInterval(repGP);
+				// });
                 
                 
                 }
@@ -126,84 +183,9 @@
 						window.clearInterval(checkGP);
                     }
                     
-				}, 2000);
+				}, 100);
 				
-            function checkGamepad() {
-                var gp = navigator.getGamepads()[0];
-                var axeLF = gp.axes[1];
-                var axeRF = gp.axes[2];
-                turn_strength = Math.round((Math.abs(axeRF) * .8) * 140)
-                if (turn_strength > 200) {
-                    turn_strength = 200;
-                }
-                full_turn_strength = Math.round(turn_strength * 1.4)
-                if (full_turn_strength > 200){
-                    full_turn_strength = 200;
-                }
-                turn_strength = Math.round(turn_strength * .5)
-                if(axeRF < -0.15){
-                    //Forward and left
-                    if (axeLF < -0.15 && axeRF > -0.9){
-                        move("forward", turn_strength, 160);
-                    }
-                    //Reverse and left
-                    else if (axeLF > 0.15 && axeRF > -0.9){
-                        
-                        move("reverse", turn_strength, 160);
-                    }
-                    // // Forward and strong left
-                    // else if (axeLF < -0.15 && axeRF < -0.9){
-                    //     move("left", full_turn_strength * .8, full_turn_strength * .8);
-                    // }
-                    // //Reverse and strong left
-                    // else if (axeLF > 0.15 && axeRF <= -0.9){
-                    //     move("right", full_turn_strength * .8, full_turn_strength * .8);
-                    // }
-                    // Full Left
-                    else {
-                        move("left", full_turn_strength ,full_turn_strength);
-                    } 
-                    $(window).trigger("gamepadLeft");
-                    // console.log(turn_strength)
-                } else if(axeRF > 0.15) {
-                    //Forward and right
-                    if (axeLF < -0.15 && axeRF < 0.9){
-                        move("forward", 160, turn_strength);
-                    }
-                    //Reverse and right
-                    else if (axeLF > 0.15 && axeRF < 0.9){
-                        move("reverse", 160, turn_strength);
-                    }
-                    // //Forward and strong right
-                    // else if (axeLF < -0.15 && axeRF >= 0.9){
-                    //     move("right", full_turn_strength * .8, full_turn_strength * .8);
-                    // }
-                    // //Reverse and strong right
-                    // else if (axeLF > 0.15 && axeRF >= 0.9){
-                    //     move("left", full_turn_strength * .8, full_turn_strength) * .8;
-                    // }
-                    //Full Right
-                    else {
-                        move("right", full_turn_strength,full_turn_strength);
-                    }
-                    $(window).trigger("gamepadRight");
-                    // console.log(turn_strength)
-                }
-                else if(axeLF < -0.5) {
-                    $(window).trigger("gamepadForward");
-                    // console.log("Forward")
-                    move("forward", 110, 100);
-                } else if(axeLF > 0.5) {
-                    $(window).trigger("gamepadReverse");
-                    // console.log("Reverse")
-                    move("reverse", 130, 100);
-                } else {
-                    $(window).trigger("gamepadStop");
-                    // console.log("Stop")
-                    move("stop")
-
-                }
-            }			
+           		
 			
 		})
 		</script>
