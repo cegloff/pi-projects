@@ -15,7 +15,7 @@
         <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
         <script>
-            function move(value, lspeed, rspeed){
+            function move(value, rspeed, lspeed){
                 lspeed = lspeed || 120;
                 rspeed = rspeed || 80;
                 axios.post('http://192.168.1.204:5000/commands',
@@ -68,17 +68,17 @@
             if (turn_strength <= 0) {
                 turn_strength = 1;
             }
-            full_turn_strength = Math.round(Math.abs(axeRF) * 200)
+            full_turn_strength = Math.round(Math.abs(axeRF) * 255)
 
             //Left Turns
             if(axeRF < -0.15){
                 //Forward and left
                 if (axeLF < -0.15){
-                    move("forward", turn_strength, 200); 
+                    move("forward", turn_strength, 255); 
                 }
                 //Reverse and left
                 else if (axeLF > 0.15){
-                    move("reverse", turn_strength, 200);
+                    move("reverse", turn_strength, 255);
                 }
                 // // Full Left
                 else {
@@ -89,11 +89,11 @@
             } else if(axeRF > 0.15) {
                 //Forward and right
                 if (axeLF < -0.15){
-                    move("forward", 200, turn_strength);
+                    move("forward", 255, turn_strength);
                 }
                 //Reverse and right
                 else if (axeLF > 0.15){
-                    move("reverse", 200, turn_strength);
+                    move("reverse", 255, turn_strength);
                 }
                 //Full Right
                 else {
@@ -105,11 +105,11 @@
             //Move forward
             else if(axeLF < -0.5) {
                 $(window).trigger("gamepadForward");
-                move("forward", 160, 130);
+                move("forward", 200, 200);
             //Reverse
             } else if(axeLF > 0.5) {
                 $(window).trigger("gamepadReverse");
-                move("reverse", 130, 100);
+                move("reverse", 200, 200);
             //Stop
             } else {
                 $(window).trigger("gamepadStop");
